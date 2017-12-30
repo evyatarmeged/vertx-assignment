@@ -2,6 +2,9 @@ package com.vertx.assignment;
 
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
@@ -13,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static io.vertx.core.Vertx.vertx;
 
 
 public class VertxApp extends AbstractVerticle {
@@ -31,12 +36,11 @@ public class VertxApp extends AbstractVerticle {
         " not contain special chars, digits or spaces and should not be null.";
     private static final Pattern FORBIDDEN_CHARS = Pattern.compile("[^a-zA-z]");
 
-
     // Call respondToBadRequest with message `POST_ERROR` upon receiving GET requests
+
     private void analyzeGetHandler(RoutingContext context) {
         respondToBadRequest(context, POST_ERROR);
     }
-
     /** POST requests handler.
      * Creates a new HashMap to be used as responseObject.
      * Extracts request body as JSON, gets parameter `text` from it and validates it.
@@ -49,7 +53,7 @@ public class VertxApp extends AbstractVerticle {
      * @param context: RoutingContext object to create response for.
      * */
     private void analyzePostHandler(RoutingContext context) {
-        Map<String, Object> responseObject = new HashMap<>();
+        JsonObject responseObject = new JsonObject();
         // Get request body as JSON. DecodeException handled
         try {
             JsonObject reqBody = context.getBodyAsJson();
@@ -90,7 +94,6 @@ public class VertxApp extends AbstractVerticle {
             respondToBadRequest(context, DECODE_ERROR);
         }
     }
-
     /**
      * Check that parameter does not contain digits, spaces or special chars.
      * @param param: Parameter from POST request.
@@ -132,6 +135,9 @@ public class VertxApp extends AbstractVerticle {
      * */
     @Override
     public void start() throws Exception {
+        VertxOptions vertxOptions = new VertxOptions().setWorkerPoolSize(40);
+        Vertx vertx = vertx(vertxOptions);
+
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
         router.post("/analyze").handler(this::analyzePostHandler);

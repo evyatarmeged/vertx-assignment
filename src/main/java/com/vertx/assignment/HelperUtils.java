@@ -17,11 +17,11 @@ class HelperUtils {
     private static final Random random = new Random();
     private static final int ASCII_VAL = 96;
     private static final int MIN_DISTANCE = 1;
-    static Set<String> wordBase = new HashSet<>();
+    private static Set<String> wordBase = new HashSet<>();
 
     /*Map keys are the summation of characters for (a=1, b=2, etc).
       Map values are Sets of strings with that total character value */
-    static Map<Integer, Set<String>> charValueMap = new HashMap<>();
+    private static Map<Integer, Set<String>> charValueMap = new HashMap<>();
 
 
     /**
