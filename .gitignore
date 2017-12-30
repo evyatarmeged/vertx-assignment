@@ -166,3 +166,5 @@ nbdist/
 file-uploads/
 target/classes/com/vertx/
 target/generated-sources/
+/.idea/
+.idea/

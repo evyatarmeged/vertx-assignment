@@ -16,11 +16,12 @@ class HelperUtils {
 
     private static final Random random = new Random();
     private static final int ASCII_VAL = 96;
-    private static Set<String> wordBase = new HashSet<>();
+    private static final int MIN_DISTANCE = 1;
+    static Set<String> wordBase = new HashSet<>();
 
     /*Map keys are the summation of characters for (a=1, b=2, etc).
       Map values are Sets of strings with that total character value */
-    private static Map<Integer, HashSet<String>> charValueMap = new HashMap<>();
+    static Map<Integer, Set<String>> charValueMap = new HashMap<>();
 
 
     /**
@@ -39,7 +40,6 @@ class HelperUtils {
         }
         return charValue;
     }
-
 
     /**
      * Find a matching valued word (or closest possible) by character values.
@@ -75,7 +75,6 @@ class HelperUtils {
         return index;
     }
 
-
     /**
      * Cache word in wordBase, add word's char values as a key in charValueMap,
      * add word to that char value's Set.
@@ -98,7 +97,7 @@ class HelperUtils {
         Set wordSet = charValueMap.get(charValue);
         if (wordSet != null) {
         /* Unfortunately, couldn't find anything better than O(n) for getting a random element
-           from a HashSet (or any Set implementation for that matter). O(n/2) on average =/  */
+           from a Set. O(n/2) on average =/  */
             int randElement = random.nextInt(wordSet.size());
             int i = 0;
             for (Object obj : wordSet) {
@@ -123,11 +122,18 @@ class HelperUtils {
            a 100 Z's in it, he can ^_^ */
         int distance = Integer.MAX_VALUE;
         Object closest = null;
-        for (Object element : wordBase) {
-            int currentDistance = StringUtils.getLevenshteinDistance(element.toString(), word);
+        for (String element : wordBase) {
+            int currentDistance = StringUtils.getLevenshteinDistance(element, word);
             if (currentDistance < distance) {
                 distance = currentDistance;
                 closest = element;
+
+            /*  If currentDistance <= 1, This is as close as it gets in Levenshtein distance
+                (unless it is the same word, which I'm guessing is not a wanted result).
+                We can return the current variable `closest`. No need to iterate further. */
+                if (currentDistance <= MIN_DISTANCE) {
+                    return closest;
+                }
             }
         }
         return closest;

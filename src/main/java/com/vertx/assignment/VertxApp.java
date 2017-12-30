@@ -37,7 +37,6 @@ public class VertxApp extends AbstractVerticle {
         respondToBadRequest(context, POST_ERROR);
     }
 
-
     /** POST requests handler.
      * Creates a new HashMap to be used as responseObject.
      * Extracts request body as JSON, gets parameter `text` from it and validates it.
@@ -92,7 +91,6 @@ public class VertxApp extends AbstractVerticle {
         }
     }
 
-
     /**
      * Check that parameter does not contain digits, spaces or special chars.
      * @param param: Parameter from POST request.
@@ -112,7 +110,6 @@ public class VertxApp extends AbstractVerticle {
         return validated;
     }
 
-
     /**
      * Respond to a bad request with a status code of 400 and a custom error message.
      * @param context: RoutingContext object to create response for.
@@ -128,7 +125,6 @@ public class VertxApp extends AbstractVerticle {
             .end(Json.encodePrettily(responseObject));
     }
 
-
     /**
      * AbstractVerticle interface function.
      * Create a Router object with a BodyHandler and define handlers for route `/analyze`
@@ -143,7 +139,7 @@ public class VertxApp extends AbstractVerticle {
 
         // Check for SystemProperty "PORT" existence and validity or use a default 8080 port.
         String envPort = System.getProperty("PORT");
-        int port = envPort.equals("") || !envPort.matches("[0-9]+") ? 8080 : Integer.parseInt(envPort);
+        int port = "".equals(envPort) || !envPort.matches("[0-9]+") ? 8080 : Integer.parseInt(envPort);
         vertx
             .createHttpServer()
             .requestHandler(router::accept)
