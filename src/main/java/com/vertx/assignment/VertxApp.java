@@ -120,7 +120,7 @@ public class VertxApp extends AbstractVerticle {
      * @param message: Custom error message to be sent in the response.
      * */
     private void respondToBadRequest(RoutingContext context, String message) {
-        Map<String, String> responseObject = new HashMap<>();
+        JsonObject responseObject = new JsonObject();
         responseObject.put(ERROR, message);
         context
             .response()

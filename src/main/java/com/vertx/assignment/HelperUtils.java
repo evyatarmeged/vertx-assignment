@@ -69,17 +69,18 @@ class HelperUtils {
     static int getIndexOfMatchingValuedWordSet(int charValue) {
         int index = -1;
         int margin = 1;
+        boolean found = false;
         try {
             int maxKey = Collections.max(charValueMap.keySet());
-            while (charValue - margin > 0 || charValue + margin <= maxKey) {
+            while ((charValue - margin > 0 || charValue + margin <= maxKey) && !found) {
                 int lowerIndex = charValue - margin;
                 int upperIndex = charValue + margin;
                 if (lowerIndex > 0 && charValueMap.get(lowerIndex) != null) {
                     index = lowerIndex;
-                    break;
+                    found = true;
                 } else if (upperIndex <= maxKey && charValueMap.get(upperIndex) != null) {
                     index = upperIndex;
-                    break;
+                    found = true;
                 }
                 margin++;
             }
