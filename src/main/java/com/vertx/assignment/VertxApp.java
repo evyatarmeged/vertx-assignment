@@ -35,11 +35,12 @@ public class VertxApp extends AbstractVerticle {
         " not contain special chars, digits or spaces and should not be null.";
     private static final Pattern FORBIDDEN_CHARS = Pattern.compile("[^a-zA-z]");
 
-    // Call respondToBadRequest with message `POST_ERROR` upon receiving GET requests
 
+    // Call respondToBadRequest with message `POST_ERROR` upon receiving GET requests
     private void analyzeGetHandler(RoutingContext context) {
         respondToBadRequest(context, POST_ERROR);
     }
+
     /** POST requests handler.
      * Creates a new HashMap to be used as responseObject.
      * Extracts request body as JSON, gets parameter `text` from it and validates it.
@@ -93,6 +94,7 @@ public class VertxApp extends AbstractVerticle {
             respondToBadRequest(context, DECODE_ERROR);
         }
     }
+
     /**
      * Check that parameter does not contain digits, spaces or special chars.
      * @param param: Parameter from POST request.
@@ -134,19 +136,23 @@ public class VertxApp extends AbstractVerticle {
      * */
     @Override
     public void start() throws Exception {
+        // Get system properties or use defaults
         int workers = HelperUtils.validateNumericSystemProperty(WORKERS) ?
             Integer.parseInt(System.getProperty(WORKERS)) : 40;
-
         int port = HelperUtils.validateNumericSystemProperty(PORT) ?
             Integer.parseInt(System.getProperty(PORT)) : 8080;
+
+        // Create a Vertx object configured with custom VertxOptions
         VertxOptions vertxOptions = new VertxOptions().setWorkerPoolSize(workers);
         Vertx vertx = vertx(vertxOptions);
 
+        // Create Router & BodyHandler objects, set the handlers on the router
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
         router.post("/analyze").handler(this::analyzePostHandler);
         router.get("/analyze").handler(this::analyzeGetHandler);
 
+        // Start the server
         vertx
             .createHttpServer()
             .requestHandler(router::accept)
