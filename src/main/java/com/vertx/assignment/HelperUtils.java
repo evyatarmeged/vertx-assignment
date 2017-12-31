@@ -25,6 +25,20 @@ class HelperUtils {
 
 
     /**
+     * Validate numeric system property != an empty string and that it contains only digits
+     * @param prop: String of property to find with System.getProperty.
+     * @return true if validated, false otherwise.
+     * */
+    static boolean validateNumericSystemProperty(String prop) {
+        String envProperty = System.getProperty(prop);
+        boolean validated = true;
+        if ("".equals(envProperty) || !envProperty.matches("[0-9]+")) {
+            validated = false;
+        }
+        return validated;
+    }
+
+    /**
      * Iterate over chars in word and extract each char's Ascii value - 96
      * to compute total char value.
      * @param word: Word to compute char value for.

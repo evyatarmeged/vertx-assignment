@@ -1,8 +1,6 @@
 package com.vertx.assignment;
 
-
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.DecodeException;
@@ -11,7 +9,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -27,6 +24,8 @@ public class VertxApp extends AbstractVerticle {
     private static final String LEXICAL = "lexical";
     private static final String ERROR = "error";
     private static final String TEXT = "text";
+    private static final String WORKERS = "WORKERS";
+    private static final String PORT = "PORT";
     private static final String CONTENT_TYPE = "content-type";
     private static final String JSON_UTF = "application/json; charset=utf-8";
     private static final String POST_ERROR = "Only POST requests are allowed.";
@@ -135,7 +134,12 @@ public class VertxApp extends AbstractVerticle {
      * */
     @Override
     public void start() throws Exception {
-        VertxOptions vertxOptions = new VertxOptions().setWorkerPoolSize(40);
+        int workers = HelperUtils.validateNumericSystemProperty(WORKERS) ?
+            Integer.parseInt(System.getProperty(WORKERS)) : 40;
+
+        int port = HelperUtils.validateNumericSystemProperty(PORT) ?
+            Integer.parseInt(System.getProperty(PORT)) : 8080;
+        VertxOptions vertxOptions = new VertxOptions().setWorkerPoolSize(workers);
         Vertx vertx = vertx(vertxOptions);
 
         Router router = Router.router(vertx);
@@ -143,9 +147,6 @@ public class VertxApp extends AbstractVerticle {
         router.post("/analyze").handler(this::analyzePostHandler);
         router.get("/analyze").handler(this::analyzeGetHandler);
 
-        // Check for SystemProperty "PORT" existence and validity or use a default 8080 port.
-        String envPort = System.getProperty("PORT");
-        int port = "".equals(envPort) || !envPort.matches("[0-9]+") ? 8080 : Integer.parseInt(envPort);
         vertx
             .createHttpServer()
             .requestHandler(router::accept)

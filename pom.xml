@@ -71,6 +71,10 @@
                             <key>PORT</key>
                             <value>8080</value>
                         </systemProperty>
+                        <systemProperty>
+                            <key>WORKERS</key>
+                            <value>40</value>
+                        </systemProperty>
                     </systemProperties>
                 </configuration>
             </plugin>
